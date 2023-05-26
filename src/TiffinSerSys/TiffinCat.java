@@ -9,6 +9,7 @@ public class TiffinCat extends JFrame {
 
     JMenuBar menubar;
     JMenu tiffinMenu, packitemMenu;
+    JMenuItem vegTiffin, nonvegTiffin;
 
     public TiffinCat(String usrtype, String id){
         this.usrtype = usrtype;
@@ -23,11 +24,19 @@ public class TiffinCat extends JFrame {
         TifcatFrame.setJMenuBar(menubar);
 
         tiffinMenu = new JMenu("Tiffins");
-        tiffinMenu.setFont(new Font("San - sherif",Font.PLAIN,16));
+        tiffinMenu.setFont(new Font("sherif",Font.PLAIN,16));
         menubar.add(tiffinMenu);
 
+        vegTiffin = new JMenuItem("Veg Tiffin");
+        vegTiffin.setFont(new Font("sherif",Font.PLAIN,14));
+        tiffinMenu.add(vegTiffin);
+
+        nonvegTiffin = new JMenuItem("Non-Veg Tiffin");
+        nonvegTiffin.setFont(new Font("sherif",Font.PLAIN,14));
+        tiffinMenu.add(nonvegTiffin);
+
         packitemMenu = new JMenu("Packed Items");
-        packitemMenu.setFont(new Font("san - sherif",Font.PLAIN,16));
+        packitemMenu.setFont(new Font("sherif",Font.PLAIN,16));
         menubar.add(packitemMenu);
 
 
