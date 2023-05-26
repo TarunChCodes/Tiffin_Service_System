@@ -5,17 +5,30 @@ import javax.swing.*;
 
 public class TiffinCat extends JFrame {
     String usrtype, id;
+    JFrame TifcatFrame;
+
+    JMenuBar menubar;
+    JMenu tiffinMenu, packitemMenu;
 
     public TiffinCat(String usrtype, String id){
-       this.usrtype = usrtype;
-       this.id = id;
+        this.usrtype = usrtype;
+        this.id = id;
 
-       JFrame TifcatFrame = new JFrame("Tiffin Cat");
-       TifcatFrame.setLayout(null);
-       TifcatFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-       TifcatFrame.setBounds(290,0,1000,725);
-       TifcatFrame.setResizable(false);
-       TifcatFrame.setBackground(Color.WHITE);
+        TifcatFrame = new JFrame("Tiffin Cat");
+        TifcatFrame.setBounds(290,0,1000,725);
+        TifcatFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        TifcatFrame.setLayout(new FlowLayout());
+
+        menubar = new JMenuBar();
+        TifcatFrame.setJMenuBar(menubar);
+
+        tiffinMenu = new JMenu("Tiffins");
+        tiffinMenu.setFont(new Font("San - sherif",Font.PLAIN,16));
+        menubar.add(tiffinMenu);
+
+        packitemMenu = new JMenu("Packed Items");
+        packitemMenu.setFont(new Font("san - sherif",Font.PLAIN,16));
+        menubar.add(packitemMenu);
 
 
         TifcatFrame.setVisible(true);
