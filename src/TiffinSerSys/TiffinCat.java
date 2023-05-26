@@ -14,16 +14,22 @@ public class TiffinCat extends JFrame {
        this.id = id;
 
        JFrame TifcatFrame = new JFrame("Tiffin Cat");
-       TifcatFrame.setLayout(null);
+       TifcatFrame.setLayout(new FlowLayout());
        TifcatFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
        TifcatFrame.setBounds(290,0,1000,725);
+       TifcatFrame.setResizable(false);
+       TifcatFrame.setBackground(Color.WHITE);
 
-        menuBar = new JMenuBar();
-        setJMenuBar(menuBar);
+        JMenuBar menubar = new JMenuBar();
+        setJMenuBar(menubar);
 
-        tiffinMenu = new JMenu("Tiffin");
-        tiffinMenu.setFont(new Font("sherif",Font.PLAIN,16));
-        menuBar.add(tiffinMenu);
+        JMenu menu = new JMenu("Menu");
+        menu.setFont(new Font("sherif",Font.PLAIN,16));
+        menubar.add(menu);
+
+//        tiffinMenu = new JMenu("Tiffin");
+//        tiffinMenu.setFont(new Font("sherif",Font.PLAIN,16));
+//        menuBar.add(tiffinMenu);
 
 
         TifcatFrame.setVisible(true);
