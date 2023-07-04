@@ -2,35 +2,36 @@ package TiffinSerSys;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.sql.ResultSet;
 
 public class Myprofile extends JFrame implements ActionListener {
 
     JPanel profilePanel, updatePanel;
-    JLabel heading,nameLabel,idLabel,phnoLabel,emailLabel,addLabel;
-    JLabel nameText,idText,phnoText, emailText,addText;
-    JTextField nameTextField,phnoTextField,emailTextField,addTextField;
-    JComboBox<String> domainCombobox;
-    JButton updateButton,backButton; // These button is on the profile_Panel
-    JButton submitButton; // This Button is on the Update_panel
+    JLabel heading, nameLabel, idLabel, phnoLabel, emailLabel, addLabel;
+    // profilePanel Components
+    JLabel idText, nameText, phnoText, emailText, addText;
+    JButton updateButton, backButton;
+    // updatePanel Component
+    JTextField nameTextField, phnoTextField, emailTextField, addTextField;
+    JComboBox<String> emaildomainCombobox;
+    JLabel nameWar, phnoWar, mailWar, addWar; //  Warning Label Used in the validation....
+    JButton submitButton; 
+
     String id,usrtype;
-    Database db = new Database();
+    Database db = new Database();    
 
-//    Warning Label Used in the validation....
-
-    JLabel nameWar, phnoWar, mailWar, addWar;
-
-    Myprofile(String empid, String usrtype){
-        this.id = empid;
+    Myprofile(String id, String usrtype){
+        this.id = id;
         this.usrtype = usrtype;
+
         setTitle("My Profile");
         setBounds(290,0,1000,725);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(null);
 
-        // - JLabel use in the Frame are :- 1. Id , 2. Name, 3. phno, 4. Email, 5. Address
+        // Profile_Panel Comonents.... - JLabel use in the Frame are :- 1. Id , 2. Name, 3. phno, 4. Email, 5. Address
+
         profilePanel = new JPanel();
         profilePanel.setBounds(0,0,1000,725);
         profilePanel.setBackground(Color.orange);
@@ -39,125 +40,160 @@ public class Myprofile extends JFrame implements ActionListener {
 
         heading  = new JLabel("PROFILE");
         heading.setFont(new Font("Arial",Font.BOLD,25));
-        profilePanel.add(heading);
-        heading.setBounds(250,30,200,30);
+        heading.setBounds(400,30,200,30);
 
         idLabel = new JLabel("ID ");
-        idLabel.setFont(new Font("Damask",Font.BOLD,16));
-        idLabel.setBounds(50,80,100,30);
-        profilePanel.add(idLabel);
-
-        idText = new JLabel("ID TEXT");
-        idText.setBounds(150,80,200,30);
-        idText.setFont(new Font("Arial",Font.ITALIC,14));
-        profilePanel.add(idText);
+        idLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        idLabel.setBounds(50,100,100,30);
 
         nameLabel = new JLabel("Name ");
-        nameLabel.setFont(new Font("Damask",Font.BOLD,16));
-        nameLabel.setBounds(50,120,100,30);
-        profilePanel.add(nameLabel);
-
-        nameText = new JLabel("NAME TEXT");
-        nameText.setFont(new Font("Arial",Font.ITALIC,14));
-        nameText.setBounds(150,120,200,30);
-        profilePanel.add(nameText);
-
+        nameLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        nameLabel.setBounds(50,150,100,30);
+        
         phnoLabel = new JLabel("Contact ");
-        phnoLabel.setFont(new Font("Damask",Font.BOLD,16));
-        phnoLabel.setBounds(50,160,100,30);
-        profilePanel.add(phnoLabel);
-
-        phnoText = new JLabel("CONTACT");
-        phnoText.setFont(new Font("Arial",Font.ITALIC,14));
-        phnoText.setBounds(150,160,200,30);
-        profilePanel.add(phnoText);
-
+        phnoLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        phnoLabel.setBounds(50,200,100,30);
+       
         emailLabel = new JLabel("E-Mail ");
-        emailLabel.setFont(new Font("Damask",Font.BOLD,16));
-        emailLabel.setBounds(50,200,100,30);
-        profilePanel.add(emailLabel);
-
-        emailText = new JLabel("EMAIL TEXT");
-        emailText.setFont(new Font("Arial",Font.ITALIC,14));
-        emailText.setBounds(150,200,220,30);
-        profilePanel.add(emailText);
+        emailLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        emailLabel.setBounds(50,250,100,30);
 
         addLabel = new JLabel("Address ");
-        addLabel.setFont(new Font("Damask",Font.BOLD,16));
-        addLabel.setBounds(50,240,100,30);
+        addLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        addLabel.setBounds(50,300,100,30);
         profilePanel.add(addLabel);
 
+        idText = new JLabel("ID TEXT");
+        idText.setBounds(180,100,200,30);
+        idText.setFont(new Font("Consolas", Font.PLAIN, 18));
+
+        nameText = new JLabel("NAME TEXT");
+        nameText.setFont(new Font("Consolas", Font.PLAIN, 18));
+        nameText.setBounds(180,150,200,30);
+
+        phnoText = new JLabel("CONTACT TEXT");
+        phnoText.setFont(new Font("Consolas", Font.PLAIN, 18));
+        phnoText.setBounds(180,200,200,30);
+
+        emailText = new JLabel("EMAIL TEXT");
+        emailText.setFont(new Font("Consolas", Font.PLAIN, 18));
+        emailText.setBounds(180,250,300,30);
+
         addText = new JLabel("ADDRESS TEXT");
-        addText.setFont(new Font("Arial",Font.ITALIC,14));
-        addText.setBounds(150,240,400,30);
-        profilePanel.add(addText);
+        addText.setFont(new Font("Consolas", Font.PLAIN, 16));
+        addText.setBounds(180,300,450,30);
 
         updateButton = new JButton("Update Profile");
         updateButton.setFont(new Font("Sans-serif",Font.PLAIN,15));
-        updateButton.setBounds(80,300,150,30);
+        updateButton.setBounds(180,380,150,30);
         updateButton.setForeground(Color.white);
         updateButton.setBackground(Color.BLACK);
         updateButton.setBorderPainted(false);
         updateButton.setFocusPainted(false);
-        profilePanel.add(updateButton);
         updateButton.addActionListener(this);
 
         backButton =  new JButton("Back");
         backButton.setFont(new Font("Sans-serif",Font.PLAIN,15));
-        backButton.setBounds(80,350,150,30);
+        backButton.setBounds(180,430,150,30);
         backButton.setBackground(Color.BLACK);
         backButton.setForeground(Color.WHITE);
         backButton.setBorderPainted(false);
         backButton.setFocusPainted(false);
-        profilePanel.add(backButton);
         backButton.addActionListener(this);
 
-        // -- Update_Panel --
+        profilePanel.add(heading);
+        profilePanel.add(idLabel);
+        profilePanel.add(nameLabel);
+        profilePanel.add(phnoLabel);
+        profilePanel.add(emailLabel);
+        profilePanel.add(idText);
+        profilePanel.add(nameText);
+        profilePanel.add(phnoText);
+        profilePanel.add(emailText);
+        profilePanel.add(addText);
+        profilePanel.add(updateButton);
+        profilePanel.add(backButton);
+
+
+        // Update_Panel Components....
+
         updatePanel = new JPanel();
         updatePanel.setBounds(0,0,1000,725);
         updatePanel.setLayout(null);
         updatePanel.setBackground(Color.lightGray);
         updatePanel.setVisible(false);
 
-
         nameTextField = new JTextField();
-        nameTextField.setBounds(150,120,250,25);
-        updatePanel.add(nameTextField);
+        nameTextField.setBounds(180,150,250,30);
+        nameTextField.setFont(new Font("Consolas", Font.PLAIN, 16));
+        nameTextField.setBorder(null);
 
         phnoTextField = new JTextField();
-        phnoTextField.setBounds(150,160,250,25);
-        updatePanel.add(phnoTextField);
-
+        phnoTextField.setBounds(180,200,250,30);
+        phnoTextField.setFont(new Font("Consolas", Font.PLAIN, 16));
+        phnoTextField.setBorder(null);
+        
         emailTextField = new JTextField();
-        emailTextField.setBounds(150,200,125,25);
-        updatePanel.add(emailTextField);
-
-        domainCombobox = new JComboBox<>();
-        domainCombobox.addItem("@gmail.com");
-        domainCombobox.addItem("@yahoo.com");
-        domainCombobox.addItem("@cyberdude.com");
-        domainCombobox.addItem("@hackermail.com");
-        domainCombobox.addItem("@opensource.com");
-        domainCombobox.setBounds(280,200,120,25);
-
-        updatePanel.add(domainCombobox);
-
+        emailTextField.setBounds(180,250,125,30);
+        emailTextField.setFont(new Font("Consolas", Font.PLAIN, 16));
+        emailTextField.setBorder(null);
+        
+        emaildomainCombobox = new JComboBox<>();
+        emaildomainCombobox.addItem("@gmail.com");
+        emaildomainCombobox.addItem("@yahoo.com");
+        emaildomainCombobox.addItem("@cyberdude.com");
+        emaildomainCombobox.addItem("@hackermail.com");
+        emaildomainCombobox.addItem("@opensource.com");
+        emaildomainCombobox.setBounds(310,250,120,30);
+        
         addTextField = new JTextField();
-        addTextField.setBounds(150,240,250,25);
-        updatePanel.add(addTextField);
+        addTextField.setBounds(180,300,250,30);
+        addTextField.setFont(new Font("Consolas", Font.PLAIN, 16));
+        addTextField.setBorder(null);
 
+        //        WARNING LABEL
 
+        nameWar = new JLabel("");
+        nameWar.setBounds(430,150,250,25);
+        nameWar.setForeground(Color.red);
+        nameWar.setFont(new Font("", Font.ITALIC, 14));
 
+        phnoWar = new JLabel("");
+        phnoWar.setBounds(430,200,250,25);
+        phnoWar.setForeground(Color.red);
+        phnoWar.setFont(new Font("", Font.ITALIC, 14));
+
+        mailWar = new JLabel("");
+        mailWar.setBounds(430,250,250,25);
+        mailWar.setForeground(Color.red);
+        mailWar.setFont(new Font("", Font.ITALIC, 14));
+        
+        addWar = new JLabel("");
+        addWar.setBounds(430,300,250,25);
+        addWar.setForeground(Color.red);
+        addWar.setFont(new Font("", Font.ITALIC, 14));
+    
         submitButton =  new JButton("Submit");
         submitButton.setFont(new Font("Sans-serif",Font.PLAIN,15));
-        submitButton.setBounds(80,300,150,30);
+        submitButton.setBounds(180,380,150,30);
         submitButton.setBackground(Color.BLACK);
         submitButton.setForeground(Color.WHITE);
         submitButton.setBorderPainted(false);
         submitButton.setFocusPainted(false);
-        updatePanel.add(submitButton);
         submitButton.addActionListener(this);
 
+        updatePanel.add(nameTextField);
+        updatePanel.add(phnoTextField);
+        updatePanel.add(emailTextField);
+        updatePanel.add(emaildomainCombobox);
+        updatePanel.add(addTextField);
+        updatePanel.add(nameWar);
+        updatePanel.add(phnoWar);
+        updatePanel.add(mailWar);
+        updatePanel.add(addWar);
+        updatePanel.add(submitButton);
+
+        
         add(profilePanel);
         add(updatePanel);
         setVisible(true);
@@ -176,7 +212,7 @@ public class Myprofile extends JFrame implements ActionListener {
                 phnoText.setText(rs.getString("phno"));
                 emailText.setText(rs.getString("email"));
                 addText.setText(rs.getString("address"));
-                JOptionPane.showMessageDialog(null,"Data Retrieved Successfully");
+               // JOptionPane.showMessageDialog(null,"Data Retrieved Successfully");
 
                 nameTextField.setText(rs.getString("name"));
                 phnoTextField.setText(rs.getString("phno"));
@@ -198,34 +234,7 @@ public class Myprofile extends JFrame implements ActionListener {
         } catch (Exception e){
             e.printStackTrace();
         }
-
-//        WARNING LABEL
-
-        nameWar = new JLabel("");
-        nameWar.setBounds(410,120,250,25);
-        nameWar.setForeground(Color.red);
-        nameWar.setFont(new Font("", Font.ITALIC, 14));
-        updatePanel.add(nameWar);
-
-        phnoWar = new JLabel("");
-        phnoWar.setBounds(410,160,250,25);
-        phnoWar.setForeground(Color.red);
-        phnoWar.setFont(new Font("", Font.ITALIC, 14));
-        updatePanel.add(phnoWar);
-
-        mailWar = new JLabel("");
-        mailWar.setBounds(410,200,250,25);
-        mailWar.setForeground(Color.red);
-        mailWar.setFont(new Font("", Font.ITALIC, 14));
-        updatePanel.add(mailWar);
-
-        addWar = new JLabel("");
-        addWar.setBounds(410,240,250,25);
-        addWar.setForeground(Color.red);
-        addWar.setFont(new Font("", Font.ITALIC, 14));
-        updatePanel.add(addWar);
-
-    }
+    } // End of Constructor...
 
     public void actionPerformed(ActionEvent ae){
         if(ae.getSource() == updateButton) {
@@ -252,6 +261,7 @@ public class Myprofile extends JFrame implements ActionListener {
                 profilePanel.add(emailLabel);
                 profilePanel.add(addLabel);
                 profilePanel.add(backButton);
+                profilePanel.add(heading);
                 heading.setText("Profile");
 
                 try{
@@ -299,7 +309,7 @@ public class Myprofile extends JFrame implements ActionListener {
             String mailusrnameStr = emailTextField.getText();
             String addStr  = addTextField.getText();
 
-            String mail = mailusrnameStr + domainCombobox.getSelectedItem();
+            String mail = mailusrnameStr +  emaildomainCombobox.getSelectedItem();
 
             boolean flag = true; // It mean All validation are true and Data is ready to send.
             boolean flag2 = true;
@@ -362,8 +372,7 @@ public class Myprofile extends JFrame implements ActionListener {
             }
 
         }
-    }
-
+    } // End of ActionPerformed... 
 
     public static void main(String[] args) {
         new Myprofile("","");

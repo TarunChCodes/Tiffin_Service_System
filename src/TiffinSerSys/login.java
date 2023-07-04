@@ -3,28 +3,30 @@ package TiffinSerSys;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.sql.ResultSet;
 
 public class login extends JFrame implements ActionListener, KeyListener {
 
     JFrame frame = new JFrame();
     JPanel login_panel, forgetPass_panel;
-    JTextField usernameTextField, usernameTextFieldf, answerTextField, newPasswordTextField, confirmPasswordTextField;
-    JPasswordField passTextField;
-    JButton loginButton, forgetButton, signupButton, updateButton, backButton;
-    JComboBox<String> loginAsComboBox, securityQuesComboBox;
-    JLabel newPasswordLabel, confirmPasswordLabel;
-    Database db = new Database();
 
-    // Warning JLabel
-    JLabel newPassWar,conPassWar;
+    // Login Jpanel components...
+        JTextField usernameTextField;
+        JPasswordField passTextField;
+        JComboBox<String> loginAsComboBox;
+        JButton loginButton, forgetButton, signupButton;
+    // PackedItem Component
+        JTextField  usernameTextFieldf, answerTextField, newPasswordTextField, confirmPasswordTextField;
+        JComboBox<String> securityQuesComboBox;
+        JLabel newPasswordLabel, confirmPasswordLabel;
+        JLabel newPassWar,conPassWar; //used to show warning if password is not upto the requiremwnt OR not matching.
+        JButton  updateButton, backButton;
+        Database db = new Database();
+        
 
     login() {
-        frame.setSize(600, 500);
+        frame.setSize(800, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
         frame.setLocationRelativeTo(null);
@@ -34,74 +36,76 @@ public class login extends JFrame implements ActionListener, KeyListener {
 
         // Login Panel
         login_panel = new JPanel() {
-
             public void paintComponent(Graphics g) {
-                ImageIcon img = new ImageIcon(ClassLoader.getSystemResource("icons/Loginicon5.jpg"));
+                ImageIcon img = new ImageIcon(ClassLoader.getSystemResource("icons/LoginBG.jpg"));
                 Image i = img.getImage();
                 g.drawImage(i, 0, 0, this.getWidth(), this.getHeight(), this);
             }
         };
         login_panel.setLayout(null);
         login_panel.setSize(frame.getWidth(), frame.getHeight());
-        // login_panel.setBackground(Color.lightGray);
 
         JLabel usernameLabel = new JLabel("User Name ");
-        usernameLabel.setBounds(200, 120, 100, 20);
-        usernameLabel.setFont(new Font("Damask", Font.BOLD, 16));
+        usernameLabel.setBounds(200, 150, 120, 20);
+        usernameLabel.setFont(new Font("Arial", Font.BOLD, 18));
         usernameLabel.setForeground(Color.BLACK);
-        login_panel.add(usernameLabel);
 
         JLabel passwordLabel = new JLabel("Password ");
-        passwordLabel.setBounds(200, 160, 100, 20);
-        passwordLabel.setFont(new Font("Damask", Font.BOLD, 16));
+        passwordLabel.setBounds(200, 200, 100, 20);
+        passwordLabel.setFont(new Font("Arial", Font.BOLD, 18));
         passwordLabel.setForeground(Color.BLACK);
-        login_panel.add(passwordLabel);
 
         JLabel loginas = new JLabel("LoginAs ");
-        loginas.setBounds(200, 200, 100, 20);
-        loginas.setFont(new Font("Damask", Font.BOLD, 16));
+        loginas.setBounds(200, 250, 100, 20);
+        loginas.setFont(new Font("Arial", Font.BOLD, 18));
         loginas.setForeground(Color.BLACK);
-        login_panel.add(loginas);
 
         usernameTextField = new JTextField();
-        usernameTextField.setBounds(300, 120, 140, 25);
-        usernameTextField.setFont(new Font("", Font.PLAIN, 12));
-        login_panel.add(usernameTextField);
+        usernameTextField.setBounds(340, 150, 180, 30);
+        usernameTextField.setFont(new Font("Consolas", Font.PLAIN, 16));
+        usernameTextField.setBorder(null);
         usernameTextField.addKeyListener(this);
 
         passTextField = new JPasswordField();
-        passTextField.setBounds(300, 160, 140, 25);
-        passTextField.setFont(new Font("", Font.PLAIN, 18));
+        passTextField.setBounds(340, 200, 180, 30);
+        passTextField.setFont(new Font("Consolas", Font.PLAIN, 18));
         passTextField.setEchoChar('*');
-        login_panel.add(passTextField);
+        passTextField.setBorder(null);
         passTextField.addKeyListener(this);
 
         loginAsComboBox = new JComboBox<>();
-        loginAsComboBox.setBounds(300, 200, 140, 25);
+        loginAsComboBox.setBounds(340, 250, 180, 30);
         loginAsComboBox.addItem("Admin");
         loginAsComboBox.addItem("Customer");
         loginAsComboBox.addItem("Employee");
-        login_panel.add(loginAsComboBox);
+        loginAsComboBox.setBorder(null);
         loginAsComboBox.addKeyListener(this);
 
         signupButton = new JButton("Sign Up");
-        signupButton.setBounds(220, 255, 90, 30);
-        login_panel.add(signupButton);
+        signupButton.setBounds(230, 320, 90, 30);
         signupButton.setFont(new Font("Sans-serif ", Font.PLAIN, 15));
         signupButton.addActionListener(this);
 
         loginButton = new JButton("Login");
-        loginButton.setBounds(330, 255, 90, 30);
-        login_panel.add(loginButton);
+        loginButton.setBounds(340, 320, 90, 30);
         loginButton.setFont(new Font("Sans-serif ", Font.PLAIN, 15));
         loginButton.addActionListener(this);
         loginButton.addKeyListener(this);
 
         forgetButton = new JButton("Forget Password");
-        forgetButton.setBounds(220, 300, 200, 30);
-        login_panel.add(forgetButton);
+        forgetButton.setBounds(230, 370, 200, 30);
         forgetButton.setFont(new Font("Sans-serif ", Font.PLAIN, 15));
         forgetButton.addActionListener(this);
+
+        login_panel.add(usernameLabel);
+        login_panel.add(passwordLabel);
+        login_panel.add(loginas);
+        login_panel.add(usernameTextField); 
+        login_panel.add(passTextField);
+        login_panel.add(loginAsComboBox);
+        login_panel.add(signupButton);
+        login_panel.add(loginButton);
+        login_panel.add(forgetButton);
 
 
         //-------------------- Forget Password Panel -----------------------
@@ -109,96 +113,107 @@ public class login extends JFrame implements ActionListener, KeyListener {
         forgetPass_panel = new JPanel();
         forgetPass_panel.setLayout(null);
         forgetPass_panel.setSize(600, 500);
-        //forgetPass_panel.setBackground(Color.lightGray);
-
+        
         JLabel heading2 = new JLabel("Forget Password");
-        heading2.setFont(new Font("Cascadia Code SemiBold", Font.BOLD, 25));
-        heading2.setBounds(190, 20, 250, 30);
-        forgetPass_panel.add(heading2);
-
-        JLabel usernamef = new JLabel("Username");
-        usernamef.setBounds(50, 80, 100, 20);
-        usernamef.setFont(new Font("Damask", Font.BOLD, 14));
-        forgetPass_panel.add(usernamef);
+        heading2.setFont(new Font("Arial", Font.BOLD, 25));
+        heading2.setHorizontalAlignment(JLabel.LEFT);
+        heading2.setBounds(280, 20, 220, 30);
+        
+        JLabel usernameLabelf = new JLabel("Username");
+        usernameLabelf.setBounds(50, 100, 150, 30);
+        usernameLabelf.setHorizontalAlignment(JLabel.LEFT);
+        usernameLabelf.setFont(new Font("Arial", Font.PLAIN, 18));
 
         JLabel securityQuesLabel = new JLabel("Security Question ");
-        securityQuesLabel.setBounds(50, 120, 130, 20);
-        securityQuesLabel.setFont(new Font("Damask", Font.BOLD, 14));
-        forgetPass_panel.add(securityQuesLabel);
+        securityQuesLabel.setBounds(50, 150, 150, 30);
+        securityQuesLabel.setHorizontalAlignment(JLabel.LEFT);
+        securityQuesLabel.setFont(new Font("Arial", Font.PLAIN, 18));
 
         JLabel securityAnsLabel = new JLabel("Answer ");
-        securityAnsLabel.setBounds(50, 160, 200, 20);
-        securityAnsLabel.setFont(new Font("Damask", Font.BOLD, 14));
-        forgetPass_panel.add(securityAnsLabel);
+        securityAnsLabel.setBounds(50, 200, 150, 30);
+        securityAnsLabel.setHorizontalAlignment(JLabel.LEFT);
+        securityAnsLabel.setFont(new Font("Arial", Font.PLAIN, 18));
+
+        newPasswordLabel = new JLabel("New Password ");
+        newPasswordLabel.setBounds(50, 250, 150, 30);
+        newPasswordLabel.setHorizontalAlignment(JLabel.LEFT);
+        newPasswordLabel.setFont(new Font("Arial", Font.PLAIN, 18));
+
+        confirmPasswordLabel = new JLabel("Confirm Password ");
+        confirmPasswordLabel.setBounds(50, 300, 180, 30);
+        confirmPasswordLabel.setHorizontalAlignment(JLabel.LEFT);
+        confirmPasswordLabel.setFont(new Font("Arial", Font.PLAIN, 18));
 
         usernameTextFieldf = new JTextField();
-        usernameTextFieldf.setBounds(200, 85, 180, 25);
-        usernameTextFieldf.setFont(new Font("", Font.PLAIN, 12));
-        forgetPass_panel.add(usernameTextFieldf);
+        usernameTextFieldf.setBounds(250, 100, 200, 30);
+        usernameTextFieldf.setFont(new Font("Consolas", Font.PLAIN, 14));
+        usernameTextFieldf.setBorder(null);
         usernameTextFieldf.addKeyListener(this);
-
 
         securityQuesComboBox = new JComboBox<>();
         securityQuesComboBox.addItem("What is your Date Of Birth?");
         securityQuesComboBox.addItem("What is the name of your pet?");
         securityQuesComboBox.addItem("Your Favourite Color?");
-        securityQuesComboBox.setBounds(200, 120, 180, 25);
-        forgetPass_panel.add(securityQuesComboBox);
+        securityQuesComboBox.setBounds(250, 150, 200, 30);
         securityQuesComboBox.addKeyListener(this);
 
         answerTextField = new JTextField();
-        answerTextField.setBounds(200, 165, 180, 25);
-        answerTextField.setFont(new Font("", Font.PLAIN, 12));
-        forgetPass_panel.add(answerTextField);
+        answerTextField.setBounds(250, 200, 200, 30);
+        answerTextField.setFont(new Font("Consolas", Font.PLAIN, 14));
+        answerTextField.setBorder(null);
         answerTextField.addKeyListener(this);
 
-        newPasswordLabel = new JLabel("New Password ");
-        newPasswordLabel.setBounds(50, 200, 180, 20);
-        newPasswordLabel.setFont(new Font("Damask", Font.BOLD, 14));
-        forgetPass_panel.add(newPasswordLabel);
-
-        confirmPasswordLabel = new JLabel("Confirm Password ");
-        confirmPasswordLabel.setBounds(50, 240, 180, 20);
-        confirmPasswordLabel.setFont(new Font("Damask", Font.BOLD, 14));
-        forgetPass_panel.add(confirmPasswordLabel);
-
         newPasswordTextField = new JTextField();
-        newPasswordTextField.setBounds(200, 205, 180, 25);
-        forgetPass_panel.add(newPasswordTextField);
+        newPasswordTextField.setBounds(250, 250, 200, 30);
+        newPasswordTextField.setFont(new Font("Consolas", Font.PLAIN, 14));
+        newPasswordTextField.setBorder(null);
         newPasswordTextField.addKeyListener(this);
 
         confirmPasswordTextField = new JTextField();
-        confirmPasswordTextField.setBounds(200, 245, 180, 25);
-        forgetPass_panel.add(confirmPasswordTextField);
+        confirmPasswordTextField.setBounds(250, 300, 200, 30);
+        confirmPasswordTextField.setFont(new Font("Consolas", Font.PLAIN, 14));
+        confirmPasswordTextField.setBorder(null);
         confirmPasswordTextField.addKeyListener(this);
 
         newPassWar = new JLabel("");
         newPassWar.setFont(new Font("",Font.ITALIC,13));
         newPassWar.setForeground(Color.red);
-        newPassWar.setBounds(390, 205, 150, 25);
-        forgetPass_panel.add(newPassWar);
-
+        newPassWar.setBounds(460, 250, 150, 30);
+        
         conPassWar = new JLabel("");
-        conPassWar.setFont(new Font("",Font.ITALIC,13));
+        conPassWar.setFont(new Font("",Font.ITALIC,13)); 
         conPassWar.setForeground(Color.red);
-        conPassWar.setBounds(390, 245, 150, 25);
-        forgetPass_panel.add(conPassWar);
+        conPassWar.setBounds(460, 300, 150, 30);
 
         updateButton = new JButton("Update");
-        updateButton.setBounds(100, 300, 190, 30);
+        updateButton.setBounds(100, 380, 200, 30);
         updateButton.addActionListener(this);
         updateButton.setFont(new Font("Sans-serif ", Font.PLAIN, 15));
         updateButton.setForeground(Color.WHITE);
         updateButton.setBackground(Color.BLACK);
         updateButton.addKeyListener(this);
-        forgetPass_panel.add(updateButton);
 
         backButton = new JButton("Back");
-        backButton.setBounds(100, 340, 190, 30);
+        backButton.setBounds(100, 430, 200, 30);
         backButton.addActionListener(this);
         backButton.setFont(new Font("Sans-serif ", Font.PLAIN, 15));
         backButton.setForeground(Color.WHITE);
         backButton.setBackground(Color.BLACK);
+
+        forgetPass_panel.add(heading2);
+        forgetPass_panel.add(usernameLabelf);
+        forgetPass_panel.add(securityQuesLabel);
+        forgetPass_panel.add(securityAnsLabel);
+        forgetPass_panel.add(newPasswordLabel);
+        forgetPass_panel.add(confirmPasswordLabel);
+        forgetPass_panel.add(usernameTextFieldf);
+        forgetPass_panel.add(securityQuesComboBox);
+        forgetPass_panel.add(answerTextField);
+        forgetPass_panel.add(newPasswordTextField);
+        forgetPass_panel.add(confirmPasswordTextField);
+        forgetPass_panel.add(newPassWar);
+        forgetPass_panel.add(conPassWar);
+        forgetPass_panel.add(updateButton);
         forgetPass_panel.add(backButton);
 
         frame.add(login_panel);
@@ -308,7 +323,7 @@ public class login extends JFrame implements ActionListener, KeyListener {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
+ 
                     newPasswordTextField.setText("");
                     confirmPasswordTextField.setText("");
                     newPasswordTextField.requestFocus();

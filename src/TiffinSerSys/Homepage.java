@@ -1,16 +1,17 @@
 package TiffinSerSys;
 
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
 public class Homepage extends JFrame implements ActionListener {
-    JPanel menu_Jpanel, main_Jpanel;
+
+    JPanel main_Jpanel, menu_Jpanel;
     JButton toggleButton;
+
     //    Button For the Menus on Menu Panel on Left Side of Main Frame
     JButton myProfile, tiffinCat, order, custInfo, empInfo, logout;
+
     String id, usrtype;
 
     Homepage(String id, String usrtype) {
@@ -43,7 +44,7 @@ public class Homepage extends JFrame implements ActionListener {
         main_Jpanel.add(toggleButton);
         toggleButton.addActionListener(this);
         
-//       ----------------------- Menu Content -------------------------------
+//       ----------------------- Menu_Panel Content -------------------------------
         menu_Jpanel = new JPanel();
         menu_Jpanel.setLayout(null);
         menu_Jpanel.setVisible(false);
@@ -53,42 +54,46 @@ public class Homepage extends JFrame implements ActionListener {
         myProfile = new JButton("My Profile");
         myProfile.setFont(new Font("Arial", Font.BOLD, 20));
         myProfile.setForeground(Color.white);
-        myProfile.setBounds(10, 50, 150, 30);
+        myProfile.setBounds(20, 50, 150, 30);
         myProfile.setContentAreaFilled(false);
         myProfile.setBorderPainted(false);
-        menu_Jpanel.add(myProfile);
+        myProfile.setHorizontalAlignment(JButton.LEFT);
         myProfile.addActionListener(this);
 
-        tiffinCat = new JButton("Tiffin Category");
+        tiffinCat = new JButton("Tiffins");
         tiffinCat.setFont(new Font("Arial", Font.BOLD, 20));
         tiffinCat.setForeground(Color.white);
-        tiffinCat.setBounds(10, 100, 195, 30);
+        tiffinCat.setBounds(20, 100, 150, 30);
         tiffinCat.setContentAreaFilled(false);
         tiffinCat.setBorderPainted(false);
+        tiffinCat.setHorizontalAlignment(JButton.LEFT);
         tiffinCat.addActionListener(this);
 
         order = new JButton("Orders");
         order.setFont(new Font("Arial", Font.BOLD, 20));
         order.setForeground(Color.white);
-        order.setBounds(10, 150, 125, 30);
+        order.setBounds(20, 150, 125, 30);
         order.setContentAreaFilled(false);
         order.setBorderPainted(false);
+        order.setHorizontalAlignment(JButton.LEFT);
         order.addActionListener(this);
 
         custInfo = new JButton("Customer Information");
         custInfo.setFont(new Font("Arial", Font.BOLD, 20));
         custInfo.setForeground(Color.white);
-        custInfo.setBounds(10, 200, 260, 30);
+        custInfo.setBounds(20, 200, 260, 30);
         custInfo.setContentAreaFilled(false);
         custInfo.setBorderPainted(false);
+        custInfo.setHorizontalAlignment(JButton.LEFT);
         custInfo.addActionListener(this);
 
         empInfo = new JButton("Employee Information");
         empInfo.setFont(new Font("Arial", Font.BOLD, 20));
         empInfo.setForeground(Color.white);
-        empInfo.setBounds(10, 250, 260, 30);
+        empInfo.setBounds(20, 250, 260, 30);
         empInfo.setContentAreaFilled(false);
         empInfo.setBorderPainted(false);
+        empInfo.setHorizontalAlignment(JButton.LEFT);
         empInfo.addActionListener(this);
 
         logout = new JButton("Log Out");
@@ -97,9 +102,10 @@ public class Homepage extends JFrame implements ActionListener {
         logout.setBounds(10, 300, 260, 30);
         logout.setContentAreaFilled(false);
         logout.setBorderPainted(false);
-        menu_Jpanel.add(logout);
         logout.addActionListener(this);
 
+        menu_Jpanel.add(myProfile);
+        menu_Jpanel.add(logout);
         if(usrtype.equals("Admin")) {
             menu_Jpanel.add(tiffinCat);
             menu_Jpanel.add(order);
@@ -130,7 +136,13 @@ public class Homepage extends JFrame implements ActionListener {
         } else if (ae.getSource() == myProfile) {
             new Myprofile(id, usrtype);
         } else if(ae.getSource() == tiffinCat) {
-            new TiffinCat(usrtype, id);
+            if(usrtype.equals("Customer")) {
+                new TiffinFrameCust(id);
+            } else if(usrtype.equals("Admin")) {
+                JOptionPane.showMessageDialog(null, "Working On it!!");
+            } else if(usrtype.equals("Employee")) {
+                JOptionPane.showMessageDialog(null, "Working On it!!");
+            }
         } else if (ae.getSource() == custInfo) {
             new CustInfo();
         } else if (ae.getSource() == empInfo) {

@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Tiffin Service System.iml" filepath="$PROJECT_DIR$/Tiffin Service System.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../TiffinFrame/TiffinFrame.iml" filepath="$PROJECT_DIR$/../TiffinFrame/TiffinFrame.iml" />
     </modules>
   </component>
 </project>
