@@ -9,12 +9,14 @@ import java.util.Objects;
 
 public class PanelClass implements ActionListener {
 
-//    -- Component for use in Tiffin Panels --
     public JPanel vegtiffinPanel, nonvegtiffinPanel, packeditemPanel, headingPanel;
     public JLabel headingLabel;
-    JLabel b4, box1priceLabel, box2priceLabel, box2price_nonvegLabel, box3priceLabel, box4priceLabel;
-    JComboBox<String> boxnumComboBox, tiffinqtyCommboBox, box1cb, box2cb, box2cb_nonveg, box3cb, box4cb;
 
+    //    -- Component for use in Tiffin Panels --
+
+    JComboBox<String> boxnumComboBox, tiffinqtyCommboBox, box1cb, box2cb, box2cb_nonveg, box3cb, box4cb;
+    JLabel b4, box1priceLabel, box2priceLabel, box2price_nonvegLabel, box3priceLabel, box4priceLabel;
+    JButton addVegTiffiCartButtton, addNonvegTiffinCartButton, cancelButton;
 
 //    -- Component use for PackedItem Panel --
 
@@ -23,11 +25,13 @@ public class PanelClass implements ActionListener {
     JComboBox<String> packeditem1Cb, packeditem2Cb, packeditem3Cb, packeditem4Cb;
     JLabel item1PriceLabel, item2PriceLabel, item3PriceLabel,item4PriceLabel;
     JComboBox<String> qtyitem1Cb, qtyitem2Cb, qtyitem3Cb, qtyitem4Cb;
-    JButton addVegTiffiCartButtton, addNonvegTiffinCartButton, cancelButton, additem1Button, additem2Button, additem3Button, additem4Button;
+    JButton additem1Button, additem2Button, additem3Button, additem4Button;
 
 //    -- Use for Database --
+
     Database db = new Database();
     ResultSet rs;
+    // tiffin Data Variable
     String[] box1item = new String[4];
     String[] box2item = new String[4];
     String[] box2item_nonveg = new String[4];
@@ -38,6 +42,7 @@ public class PanelClass implements ActionListener {
     String[] box2price_nonveg = new String[4];
     String[] box3price = new String[4];
     String[] box4price = new String[4];
+    // packedItem Data
     String[] packeditem1 = new String[3];
     String[] packeditem2 = new String[3];
     String[] packeditem3 = new String[3];
@@ -47,8 +52,9 @@ public class PanelClass implements ActionListener {
     String[] packeditem3Price = new String[3];
     String[] packeditem4Price = new String[3];
 
-
-    public PanelClass(String menuStr) {
+    String cust_id;
+    public PanelClass(String menuStr,String id) {
+        cust_id = id;
 
         headingPanel = new JPanel() {
             public void paintComponent(Graphics g) {
@@ -91,6 +97,8 @@ public class PanelClass implements ActionListener {
 
 //        This following block of statement helps to retrieve the data for the ComboBox of Boxes into the Array of String
 
+//        Here tiffinBox and there  PRICE are retrieve from the DB in the String
+
         try {
             rs = db.s.executeQuery("select * from tiffin");
             int i = 0;
@@ -99,22 +107,8 @@ public class PanelClass implements ActionListener {
                 box1item[i] = rs.getString("box1");
                 box2item[i] = rs.getString("box2");
                 box2item_nonveg[i] = rs.getString("box2nonveg");
-                box2item[i] = rs.getString("box2");
                 box3item[i] = rs.getString("box3");
                 box4item[i] = rs.getString("box4");
-                i++;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-//        Here PRICE are retrieve from the DB in the String
-
-        try {
-            rs = db.s.executeQuery("select * from tiffin");
-            int i = 0;
-            while(rs.next()){
-
                 box1price[i] = rs.getString("box1_itemprice");
                 box2price[i] = rs.getString("box2_itemprice");
                 box2price_nonveg[i] = rs.getString("box2nonveg_itemprice");
@@ -385,6 +379,7 @@ public class PanelClass implements ActionListener {
 
 
 //  Common button for order and exit from panel/frame
+
         addVegTiffiCartButtton = new JButton("Add");
         addVegTiffiCartButtton.setBounds(375,600,100,35);
         addVegTiffiCartButtton.setFont(new Font("MONOSPACED",Font.BOLD,18));
@@ -523,13 +518,14 @@ public class PanelClass implements ActionListener {
     }
 
     public static void main(String[] args) {
-        new PanelClass("");
+        new PanelClass("","");
     }
 
     @Override
     public void actionPerformed(ActionEvent ae) {
 
 //  This block of statement helps show the required number of Box as choose by the user in boxnumComboBox For tiffins...
+
         if (ae.getSource() == boxnumComboBox) {
             String s = (String) boxnumComboBox.getSelectedItem();
 
@@ -603,7 +599,6 @@ public class PanelClass implements ActionListener {
         // Veg Tiffins
         if(ae.getSource() == addVegTiffiCartButtton) {
 
-
             boxnumStr = (String) boxnumComboBox.getSelectedItem();
             tiffinqtyStr = (String) tiffinqtyCommboBox.getSelectedItem();
 
@@ -624,13 +619,73 @@ public class PanelClass implements ActionListener {
                 totalPriceStr = box1PriceStr + box2PriceStr + box3PriceStr + box4PriceStr;
             }
 
+            // Creating a tiffinId for new customer adding tiffin to tiffin order table.
+            String tiffin_id = "";
+
+            boolean flag = true; // true means first order
+            boolean flag1 = true; // true means first order
+                    
+            try {
+                ResultSet rs = db.s.executeQuery("select tiffin_id from tiffinorder; "); // 
+                if(rs.next()){
+                    // it means its not the very first order
+                    flag = false;
+                    System.out.println("Flag "+flag);
+                } 
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if(flag == false) {
+                try {
+                    rs = db.s.executeQuery("select tiffin_id from tiffinorder where cust_id='"+cust_id+"' ;");
+                    if(rs.next()){
+                        // it means its not the first order of that cust_id customer
+                        flag1 = false;
+                        tiffin_id = rs.getString("tiffin_id");
+                        System.out.println("Tiffin Id in case 3 : "+tiffin_id);
+                    }
+                } catch(Exception e){
+                    e.printStackTrace();
+                }
+
+                if(flag1 == true) { // it means its the first order of that cust_id customer
+                    try {
+                        rs = db.s.executeQuery(" select tiffin_id from tiffinorder order by tiffin_id ASC ");
+
+                        while(rs.next() ){
+                            tiffin_id = "";
+                            tiffin_id = rs.getString("tiffin_id");
+                        }
+                        if(tiffin_id.length()>0) {
+                            int last_digit = tiffin_id.charAt(tiffin_id.length()-1) -'0';
+                            last_digit++;
+                            tiffin_id = tiffin_id.substring(0,tiffin_id.length()-1);
+                            tiffin_id = tiffin_id + last_digit;
+
+                            // System.out.println("Tiffin_id in case 2 : "+tiffin_id);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            } 
+            else {
+                tiffin_id = "T001"; // it means its very First order
+                System.out.println("Tiffin_id in case 1 : "+tiffin_id);
+            }
+            
             // Sending Data to DB in table tiffinorder
-            String sql = "INSERT INTO `tiffinorder`(`box_qty`, `tiffin_qty`, `item1`, `item1_price`, `item2`, `item2_price`, `item3`, `item3_price`, `item4`, `item4_price`, `total_price`) " +
-                    "VALUES ('"+boxnumStr+"','"+tiffinqtyStr+"','"+box1Str+"','"+box1PriceStr+"','"+box2Str+"','"+box2PriceStr+"','"+box3Str+"','"+box3PriceStr+"','"+box4Str+"','"+box4PriceStr+"','"+totalPriceStr+"')";
+            String sql = "INSERT INTO `tiffinorder`(`tiffin_id`, `cust_id`,`box_qty`, `tiffin_qty`, `item1`, `item1_price`, `item2`, `item2_price`, `item3`, `item3_price`, `item4`, `item4_price`, `total_price`) " +
+                    "VALUES ('"+tiffin_id+"','"+cust_id+"','"+boxnumStr+"','"+tiffinqtyStr+"','"+box1Str+"','"+box1PriceStr+"','"+box2Str+"','"+box2PriceStr+"','"+box3Str+"','"+box3PriceStr+"','"+box4Str+"','"+box4PriceStr+"','"+totalPriceStr+"')";
 
             try{
                 Database db = new Database();
-                db.s.executeUpdate("TRUNCATE TABLE `tiffinorder`");
+                rs = db.s.executeQuery("select * from tiffinorder where cust_id='"+cust_id+"' ;");
+                if(rs.next()){
+                    db.s.executeUpdate("Delete from tiffinorder where cust_id = '"+cust_id+"' ;");
+                }
                 db.s.executeUpdate(sql);
                 JOptionPane.showMessageDialog(null,"Tiffin Added Successfully");
             } catch (Exception e) {
@@ -660,13 +715,73 @@ public class PanelClass implements ActionListener {
                 totalPriceStr = box1PriceStr + box2PriceStr + box3PriceStr + box4PriceStr;
             }
 
+            // Creating a tiffinId for new customer adding tiffin to tiffin order table.
+            String tiffin_id = "";
+
+            boolean flag = true; // true means first order
+            boolean flag1 = true; // true means first order
+                    
+            try {
+                ResultSet rs = db.s.executeQuery("select tiffin_id from tiffinorder; "); // 
+                if(rs.next()){
+                    // it means its not the very first order
+                    flag = false;
+                    System.out.println("Flag "+flag);
+                } 
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if(flag == false) {
+                try {
+                    rs = db.s.executeQuery("select tiffin_id from tiffinorder where cust_id='"+cust_id+"' ;");
+                    if(rs.next()){
+                        // it means its not the first order of that cust_id customer
+                        flag1 = false;
+                        tiffin_id = rs.getString("tiffin_id");
+                        System.out.println("Tiffin Id in case 3 : "+tiffin_id);
+                    }
+                } catch(Exception e){
+                    e.printStackTrace();
+                }
+
+                if(flag1 == true) { // it means its the first order of that cust_id customer
+                    try {
+                        rs = db.s.executeQuery(" select tiffin_id from tiffinorder order by tiffin_id ASC ");
+
+                        while(rs.next() ){
+                            tiffin_id = "";
+                            tiffin_id = rs.getString("tiffin_id");
+                        }
+                        if(tiffin_id.length()>0) {
+                            int last_digit = tiffin_id.charAt(tiffin_id.length()-1) -'0';
+                            last_digit++;
+                            tiffin_id = tiffin_id.substring(0,tiffin_id.length()-1);
+                            tiffin_id = tiffin_id + last_digit;
+
+                            // System.out.println("Tiffin_id in case 2 : "+tiffin_id);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            } 
+            else {
+                tiffin_id = "T001"; // it means its very First order
+                System.out.println("Tiffin_id in case 1 : "+tiffin_id);
+            }
+
             // Sending Data to DB in table tiffinorder
-            String sql = "INSERT INTO `tiffinorder`(`box_qty`, `tiffin_qty`, `item1`, `item1_price`, `item2`, `item2_price`, `item3`, `item3_price`, `item4`, `item4_price`, `total_price`) " +
-                    "VALUES ('"+boxnumStr+"','"+tiffinqtyStr+"','"+box1Str+"','"+box1PriceStr+"','"+box2Str+"','"+box2PriceStr+"','"+box3Str+"','"+box3PriceStr+"','"+box4Str+"','"+box4PriceStr+"','"+totalPriceStr+"')";
+            String sql = "INSERT INTO `tiffinorder`(`tiffin_id`, `cust_id`,`box_qty`, `tiffin_qty`, `item1`, `item1_price`, `item2`, `item2_price`, `item3`, `item3_price`, `item4`, `item4_price`, `total_price`) " +
+                    "VALUES ('"+tiffin_id+"','"+cust_id+"','"+boxnumStr+"','"+tiffinqtyStr+"','"+box1Str+"','"+box1PriceStr+"','"+box2Str+"','"+box2PriceStr+"','"+box3Str+"','"+box3PriceStr+"','"+box4Str+"','"+box4PriceStr+"','"+totalPriceStr+"')";
 
             try{
-                Database db = new Database();
-                db.s.executeUpdate("TRUNCATE TABLE `tiffinorder`");
+                  Database db = new Database();
+                rs = db.s.executeQuery("select * from tiffinorder where cust_id='"+cust_id+"' ;");
+                if(rs.next()){
+                    db.s.executeUpdate("Delete from tiffinorder where cust_id = '"+cust_id+"' ;");
+                }
                 db.s.executeUpdate(sql);
                 JOptionPane.showMessageDialog(null,"Tiffin Added Successfully");
             } catch (Exception e) {
@@ -678,6 +793,97 @@ public class PanelClass implements ActionListener {
         String itemNameStr, itemTypeStr;
         int itemQtyStr; // for total Price tiffinorder 'totalPriceStr' is use in packedorder
 
+        String packeditem_id = "";
+        if(ae.getSource() == additem1Button || ae.getSource() == additem2Button || ae.getSource() == additem3Button || ae.getSource() == additem4Button){
+            // check wheater that customer exist or not 
+            String dbcust_id ="";
+            try {
+                rs = db.s.executeQuery("Select cust_id from packedorder");
+                if(rs.next()){
+                    dbcust_id = rs.getString("cust_id");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if(dbcust_id.equals(cust_id)) {
+               
+            boolean flag = true; // use for no order in the table
+            boolean flag1 = true; // used for repeat order in table 
+
+            try {
+                rs = db.s.executeQuery("select * from packedorder");
+                if(rs.next()) {
+                    flag = false; // not the first order in the table
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if(flag==false) {
+
+                try{
+                    rs = db.s.executeQuery("Select packeditem_id from packedorder where cust_id = '"+cust_id+"' ");
+                    if(rs.next()){
+                        packeditem_id = rs.getString("packeditem_id");
+                        flag1 = false; // not the first order by the customer 
+                    }
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+
+                if(flag1==true){ 
+                    int last_digit = packeditem_id.charAt(packeditem_id.length()-1) -'0';
+                    last_digit++;
+                    packeditem_id = packeditem_id.substring(0,packeditem_id.length()-1);
+                    packeditem_id = packeditem_id + last_digit;
+                }
+            } else {
+                packeditem_id = "P001";
+            }
+            } else {
+                try {
+                    db.s.executeUpdate("TRUNCATE TABLE packedorder");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            boolean flag = true; // use for no order in the table
+            boolean flag1 = true; // used for repeat order in table 
+
+            try {
+                rs = db.s.executeQuery("select * from packedorder");
+                if(rs.next()) {
+                    flag = false; // not the first order in the table
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if(flag==false) {
+
+                try{
+                    rs = db.s.executeQuery("Select packeditem_id from packedorder where cust_id = '"+cust_id+"' ");
+                    if(rs.next()){
+                        packeditem_id = rs.getString("packeditem_id");
+                        flag1 = false; // not the first order by the customer 
+                    }
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+
+                if(flag1==true){ 
+                    int last_digit = packeditem_id.charAt(packeditem_id.length()-1) -'0';
+                    last_digit++;
+                    packeditem_id = packeditem_id.substring(0,packeditem_id.length()-1);
+                    packeditem_id = packeditem_id + last_digit;
+                }
+            } else {
+                packeditem_id = "P001";
+            }
+            }
+        }
+
         if (ae.getSource() == additem1Button) {
             itemNameStr = nameItem1Label.getText();
             itemTypeStr = (String) packeditem1Cb.getSelectedItem();
@@ -685,14 +891,8 @@ public class PanelClass implements ActionListener {
             // Total price of item is item_price * item_qty;
             totalPriceStr = Integer.parseInt(packeditem1Price[packeditem1Cb.getSelectedIndex()]) * itemQtyStr;
 
-            // First check whether the itemType exist in the table or not.. Take Bool type variable for it..
-            // If it already exists then first delete that particular row and update it with new qty and price..
-            // If not exists the add it to the table simply as you were doing.
-
-
             try {
                 rs = db.s.executeQuery("SELECT * FROM `packedorder` WHERE `item_name` = '"+itemNameStr+"' ");
-
                 if(rs.next()) {
                     db.s.executeUpdate("DELETE FROM `packedorder` WHERE `item_name`= '"+itemNameStr+"' ");
                 }
@@ -701,7 +901,7 @@ public class PanelClass implements ActionListener {
             }
 
             try {
-                db.s.executeUpdate("Insert into packedorder (item_name, item_type, item_qty, total_price) VALUES ('"+itemNameStr+"', '"+itemTypeStr+"', '"+itemQtyStr+"','"+totalPriceStr+"') ");
+                db.s.executeUpdate("Insert into packedorder ( packeditem_id , cust_id , item_name, item_type, item_qty, total_price) VALUES ('"+packeditem_id+"','"+cust_id+"','"+itemNameStr+"', '"+itemTypeStr+"', '"+itemQtyStr+"','"+totalPriceStr+"') ");
                 JOptionPane.showMessageDialog(null,"Item Added Successfully.");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -726,7 +926,7 @@ public class PanelClass implements ActionListener {
             }
 
             try {
-                db.s.executeUpdate("Insert into packedorder (item_name, item_type, item_qty, total_price) VALUES ('"+itemNameStr+"', '"+itemTypeStr+"', '"+itemQtyStr+"','"+totalPriceStr+"') ");
+                db.s.executeUpdate("Insert into packedorder (`packeditem_id`, `cust_id`,item_name, item_type, item_qty, total_price) VALUES ('"+packeditem_id+"','"+cust_id+"','"+itemNameStr+"', '"+itemTypeStr+"', '"+itemQtyStr+"','"+totalPriceStr+"') ");
                 JOptionPane.showMessageDialog(null,"Item Added Successfully.");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -750,8 +950,7 @@ public class PanelClass implements ActionListener {
             }
 
             try {
-                db.s.executeUpdate("Insert into packedorder (item_name, item_type, item_qty, total_price) VALUES ('"+itemNameStr+"', '"+itemTypeStr+"', '"+itemQtyStr+"','"+totalPriceStr+"') ");
-                JOptionPane.showMessageDialog(null,"Item Added Successfully.");
+                db.s.executeUpdate("Insert into packedorder (`packeditem_id`, `cust_id`,item_name, item_type, item_qty, total_price) VALUES ('"+packeditem_id+"','"+cust_id+"','"+itemNameStr+"', '"+itemTypeStr+"', '"+itemQtyStr+"','"+totalPriceStr+"') ");                JOptionPane.showMessageDialog(null,"Item Added Successfully.");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -774,7 +973,7 @@ public class PanelClass implements ActionListener {
             }
 
             try {
-                db.s.executeUpdate("Insert into packedorder (item_name, item_type, item_qty, total_price) VALUES ('"+itemNameStr+"', '"+itemTypeStr+"', '"+itemQtyStr+"','"+totalPriceStr+"') ");
+                db.s.executeUpdate("Insert into packedorder (`packeditem_id`, `cust_id`,item_name, item_type, item_qty, total_price) VALUES ('"+packeditem_id+"','"+cust_id+"','"+itemNameStr+"', '"+itemTypeStr+"', '"+itemQtyStr+"','"+totalPriceStr+"') ");
                 JOptionPane.showMessageDialog(null,"Item Added Successfully.");
             } catch (Exception e) {
                 e.printStackTrace();

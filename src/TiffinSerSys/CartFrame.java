@@ -7,9 +7,9 @@ import java.awt.event.*;
 import java.sql.ResultSet;
 
 public class CartFrame implements ActionListener {
-    JFrame cartFrame;
-    JPanel headingPanel,cartPanel;
-    JLabel heading1Label, heading2Label, heading3Label; // Personal Info, Tiffin, Packed Items, Payment
+JFrame cartFrame;
+JPanel headingPanel,cartPanel;
+    JLabel heading1Label, heading2Label, heading3Label; // Tiffin, Packed Items, Payment
     JLabel nameLabel, contactLabel, addLabel;
     JTextArea tiffinTextArea, packeditemTextArea;
     JLabel tiffinPriceLabel, packeditemPriceLabel, totalPriceLabel; // Price Label use to show the Price according to the tiffin and Packeditem cost
@@ -19,7 +19,11 @@ public class CartFrame implements ActionListener {
     Database db = new Database();
     ResultSet rs;
 
-    CartFrame() {
+    int totalOrderPrice;
+    String cust_id, nameStr, addStr, phnoStr;
+    CartFrame(String id) {
+        cust_id = id;
+
         cartFrame = new JFrame("Cart");
         cartFrame.setSize(715,720);
         cartFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -46,15 +50,15 @@ public class CartFrame implements ActionListener {
 //        JScrollPane jspPanel = new JScrollPane(cartPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         cartPanel.setBounds(0,80,700,600); //575
 
-        nameLabel = new JLabel("Tarun Chaudhary");
+        nameLabel = new JLabel("Name");
         nameLabel.setBounds(20,10,150,25);
         nameLabel.setFont(new Font("Tahoma",Font.ITALIC,15));
 
-        contactLabel = new JLabel("+91 8445402294");
+        contactLabel = new JLabel("");
         contactLabel.setBounds(20,30,150,25);
         contactLabel.setFont(new Font("Tahoma",Font.PLAIN,14));
 
-        addLabel = new JLabel("A-41, Ganpati Vihar, Meerut, U.P, 250001");
+        addLabel = new JLabel("");
         addLabel.setBounds(20,50,300,25);
         addLabel.setFont(new Font("Tahoma",Font.PLAIN,14));
 
@@ -110,7 +114,7 @@ public class CartFrame implements ActionListener {
         tPriceabel.setHorizontalAlignment(JLabel.RIGHT);
         tPriceabel.setFont(new Font("Arial",Font.ITALIC,16));
 
-        tiffinPriceLabel = new JLabel();
+        tiffinPriceLabel = new JLabel("₹ --");
         tiffinPriceLabel.setBounds(260,450,100,20);
         tiffinPriceLabel.setFont(new Font("Arial",Font.PLAIN,14));
 
@@ -119,7 +123,7 @@ public class CartFrame implements ActionListener {
         piPriceLabel.setHorizontalAlignment(JLabel.RIGHT);
         piPriceLabel.setFont(new Font("Arial",Font.ITALIC,16));
 
-        packeditemPriceLabel = new JLabel("₹ 1115");
+        packeditemPriceLabel = new JLabel("₹ --");
         packeditemPriceLabel.setBounds(260,475,100,20);
         packeditemPriceLabel.setFont(new Font("Arial",Font.PLAIN,14));
 
@@ -128,7 +132,7 @@ public class CartFrame implements ActionListener {
         toPriceLabel.setHorizontalAlignment(JLabel.RIGHT);
         toPriceLabel.setFont(new Font("Arial",Font.ITALIC,16));
 
-        totalPriceLabel = new JLabel("₹ 2165");
+        totalPriceLabel = new JLabel("₹ --");
         totalPriceLabel.setBounds(260,500,100,20);
         totalPriceLabel.setFont(new Font("Arial",Font.PLAIN,14));
 
@@ -157,6 +161,23 @@ public class CartFrame implements ActionListener {
         orderButton.setForeground(Color.WHITE);
         orderButton.setBorderPainted(false);
         orderButton.setFocusPainted(false);
+        orderButton.addActionListener(this);
+
+//  Retrieving customer Info from userdet table to nameLabel,contactLabel,addLabel
+
+        try {
+            rs = db.s.executeQuery("SELECT `name`, `phno`, `address` FROM `userdet` WHERE custid = '"+cust_id+"' ");
+            if(rs.next()) {
+                nameStr = rs.getString("name");
+                addStr  = rs.getString("address");
+                phnoStr = rs.getString("phno");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        nameLabel.setText(nameStr);
+        contactLabel.setText("+91 " + phnoStr );
+        addLabel.setText(addStr);
 
 //  Retrieving order from tables to TextArea
 
@@ -166,7 +187,7 @@ public class CartFrame implements ActionListener {
         String box1PriceStr= "", box2PriceStr= "",box3PriceStr= "" ,box4PriceStr= "";
         int tiffinqtyStr = 0, boxqtyStr = 0, tiffinTotalPrice = 0;
         try {
-            rs = db.s.executeQuery("select * from tiffinorder");
+            rs = db.s.executeQuery("select * from tiffinorder where cust_id = '"+cust_id+"'");
 //            JOptionPane.showMessageDialog(null, "Data Reterived!!");
 
             while (rs.next()) {
@@ -278,11 +299,25 @@ public class CartFrame implements ActionListener {
 
         packeditemPriceLabel.setText("₹ "+String.valueOf(itemtotalPrice));
 
-        int totalOrderPrice = tiffinTotalPrice + itemtotalPrice;
+        totalOrderPrice = tiffinTotalPrice + itemtotalPrice;
         totalPriceLabel.setText("₹ "+totalOrderPrice);
 
         tiffinTextArea.setText(tiffinCartStr);
-        packeditemTextArea.setText(packeditemCartStr);
+        String dbcust_id = "";
+        try {
+            rs = db.s.executeQuery("select cust_id from packedorder");
+            if(rs.next()) {
+                dbcust_id = rs.getString("cust_id");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if(dbcust_id.equals(cust_id)) {
+            packeditemTextArea.setText(packeditemCartStr);
+        } else {
+            packeditemCartStr = "No Item Added!!😢";
+            packeditemTextArea.setText(packeditemCartStr);
+        }
 
 //        -- Adding Component to Panel --
         cartPanel.add(nameLabel);
@@ -317,7 +352,7 @@ public class CartFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        new CartFrame();
+        new CartFrame("");
     }
 
     @Override
@@ -360,6 +395,99 @@ public class CartFrame implements ActionListener {
                 e.printStackTrace();
             }
         }
+
+        if(ae.getSource() == paymentOptComboBox) {
+            String  getItem = (String) paymentOptComboBox.getSelectedItem();
+            assert getItem != null;
+            if(getItem.equals("Online")) {
+                payButton.setVisible(true);
+            }
+            if(getItem.equals("COD")) {
+                payButton.setVisible(false);
+            }
+        }
+        
+        if(ae.getSource() == orderButton) {
+            String order_id = ""; // that has to be generated for every customer making order.
+            String tiffinIdStr ="", packedIdStr ="", priceStr, payStatusStr, orderstatusStr; // already have nameStr, addStr, phnoStr
+            // Collecting Data for order tables
+
+            payStatusStr   = (String) paymentOptComboBox.getSelectedItem();
+            priceStr       = totalOrderPrice + ".00";
+            orderstatusStr = "Accepted";
+
+            // Generating Order ID
+             
+            Boolean flag = false;
+
+            try {
+                rs = db.s.executeQuery("SELECT order_id FROM `order` ORDER by order_id ASC;");
+                while(rs.next()){
+                    flag = true; // it means its not the first order 
+                    order_id = "";
+                    order_id = rs.getString("order_id");
+                }
+            } catch(Exception e){
+                e.printStackTrace();
+            }
+            if(flag == true) {
+                // Genrate a new order_id 
+                int last_digit = order_id.charAt(order_id.length()-1) -'0';
+                last_digit++;
+                order_id = order_id.substring(0,order_id.length()-1);
+                order_id = order_id + last_digit;
+            } else if(flag == false) {
+                order_id = "O#001";
+            }
+            
+            try {
+                rs = db.s.executeQuery("SELECT tiffin_id FROM tiffinorder WHERE cust_id = '"+cust_id+"'");
+                
+                if(rs.next())
+                    tiffinIdStr = rs.getString("tiffin_id");
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                rs = db.s.executeQuery("SELECT  packeditem_id FROM packedorder WHERE cust_id = '"+cust_id+"'");
+                
+                if(rs.next())
+                    packedIdStr = rs.getString("packeditem_id");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        // Data sending to Order Table for Customer cust_id
+
+            // Before doing that check the previous order status of cust_id if its "Deleverd" then only accept the order else reject it by showing a msg "Soory prev order is not delevered yet!!"
+            Boolean order_orNot = true;
+            try {
+                rs = db.s.executeQuery("Select order_status from tss.order where cust_id = '"+cust_id+"'");
+                if(rs.next()) {
+                    if(rs.getString("order_status").equals("Accepted")) {
+                        order_orNot = false;
+                    }
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if(order_orNot == true) {
+                try {
+                    db.s.executeUpdate("INSERT INTO `order`(`order_id`, `cust_id`, `tiffin_id`, `packeditem_id`, `name`, `address`, `ph_no`, `price`, `pay_status`, `order_status`) VALUES ('"+order_id+"','"+cust_id+"','"+tiffinIdStr+"','"+packedIdStr+"','"+nameStr+"','"+addStr+"','"+phnoStr+"','"+priceStr+"','"+payStatusStr+"','"+orderstatusStr+"')");
+                    JOptionPane.showMessageDialog(null, "Order Accepted");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }   
+            } else if(order_orNot == false ){
+                // it means customer doing another order before getting deleverd first orderd
+                JOptionPane.showMessageDialog(null, "Soory 😶‍🌫️ prev order is not delevered yet!!");
+            }
+        }
+
+
     }
 }
 

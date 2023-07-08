@@ -20,7 +20,7 @@ public class TiffinFrameCust implements ActionListener{
         MainFrame = new JFrame("Tiffin Category");
         MainFrame.setLayout(null);
         MainFrame.setBounds(290,0,1000,725);
-        MainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        MainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         MainFrame.setBackground(new Color(237, 235, 246));
 
         menuBar = new JMenuBar();
@@ -102,7 +102,7 @@ public class TiffinFrameCust implements ActionListener{
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == vegTiffin) {
 
-            PanelClass p = new PanelClass("veg");
+            PanelClass p = new PanelClass("veg",id);
             p.nonvegtiffinPanel.setVisible(false);
             p.packeditemPanel.setVisible(false);
             p.vegtiffinPanel.setVisible(true);
@@ -111,7 +111,7 @@ public class TiffinFrameCust implements ActionListener{
 
         } else if (ae.getSource() == nonvegTiffin) {
 
-            PanelClass p = new PanelClass("nonveg");
+            PanelClass p = new PanelClass("nonveg",id);
             p.nonvegtiffinPanel.setVisible(true);
             p.packeditemPanel.setVisible(false);
             p.vegtiffinPanel.setVisible(false);
@@ -120,7 +120,7 @@ public class TiffinFrameCust implements ActionListener{
 
         } else if (ae.getSource() == packedMenuItem) {
 
-            PanelClass p = new PanelClass("packed");
+            PanelClass p = new PanelClass("packed",id);
             p.nonvegtiffinPanel.setVisible(false);
             p.packeditemPanel.setVisible(true);
             p.vegtiffinPanel.setVisible(false);
@@ -130,7 +130,7 @@ public class TiffinFrameCust implements ActionListener{
 
         } else if (ae.getSource() == closeMenuItem) {
 
-            PanelClass p = new PanelClass("close");
+            PanelClass p = new PanelClass("close",id);
             p.nonvegtiffinPanel.setVisible(false);
             p.packeditemPanel.setVisible(false);
             p.vegtiffinPanel.setVisible(false);
@@ -160,7 +160,7 @@ public class TiffinFrameCust implements ActionListener{
                 MainFrame.dispose();
             }
         } else if (ae.getSource() == cartMenuItem) {
-            new CartFrame();
+            new CartFrame(id);
         }
     }
 }

@@ -10,7 +10,7 @@ public class Homepage extends JFrame implements ActionListener {
     JButton toggleButton;
 
     //    Button For the Menus on Menu Panel on Left Side of Main Frame
-    JButton myProfile, tiffinCat, order, custInfo, empInfo, logout;
+    JButton myProfile, tiffinCat, cart, order, custInfo, empInfo, logout;
 
     String id, usrtype;
 
@@ -78,6 +78,15 @@ public class Homepage extends JFrame implements ActionListener {
         order.setHorizontalAlignment(JButton.LEFT);
         order.addActionListener(this);
 
+        cart = new JButton("Cart");
+        cart.setFont(new Font("Arial", Font.BOLD, 20));
+        cart.setForeground(Color.white);
+        cart.setBounds(20, 200, 150, 30);
+        cart.setContentAreaFilled(false);
+        cart.setBorderPainted(false);
+        cart.setHorizontalAlignment(JButton.LEFT);
+        cart.addActionListener(this);
+
         custInfo = new JButton("Customer Information");
         custInfo.setFont(new Font("Arial", Font.BOLD, 20));
         custInfo.setForeground(Color.white);
@@ -97,9 +106,9 @@ public class Homepage extends JFrame implements ActionListener {
         empInfo.addActionListener(this);
 
         logout = new JButton("Log Out");
-        logout.setFont(new Font("Arial", Font.BOLD, 16));
+        logout.setFont(new Font("Arial", Font.BOLD, 18));
         logout.setForeground(Color.white);
-        logout.setBounds(10, 300, 260, 30);
+        logout.setBounds(10, 600, 260, 30);
         logout.setContentAreaFilled(false);
         logout.setBorderPainted(false);
         logout.addActionListener(this);
@@ -108,13 +117,16 @@ public class Homepage extends JFrame implements ActionListener {
         menu_Jpanel.add(logout);
         if(usrtype.equals("Admin")) {
             menu_Jpanel.add(tiffinCat);
-            menu_Jpanel.add(order);
+             menu_Jpanel.add(order);
             menu_Jpanel.add(custInfo);
             menu_Jpanel.add(empInfo);
         } else if(usrtype.equals("Customer")) {
             menu_Jpanel.add(tiffinCat);
+             menu_Jpanel.add(order);
+            menu_Jpanel.add(cart);
+        } else if (usrtype.equals("Employee")) {
+            order.setBounds(20, 100, 150, 30);
             menu_Jpanel.add(order);
-            logout.setBounds(10, 200, 260, 30);
         }
  
         add(menu_Jpanel);
@@ -143,6 +155,16 @@ public class Homepage extends JFrame implements ActionListener {
             } else if(usrtype.equals("Employee")) {
                 JOptionPane.showMessageDialog(null, "Working On it!!");
             }
+        } else if (ae.getSource() == order) {
+            if(usrtype.equals("Customer")) {
+                JOptionPane.showMessageDialog(null, "Working On it!!");
+            } else if(usrtype.equals("Admin")) {
+                JOptionPane.showMessageDialog(null, "Working On it!!");
+            } else if(usrtype.equals("Employee")) {
+                JOptionPane.showMessageDialog(null, "Working On it!!");
+            }
+        } else if (ae.getSource() == cart) {
+            new CartFrame(id);
         } else if (ae.getSource() == custInfo) {
             new CustInfo();
         } else if (ae.getSource() == empInfo) {
