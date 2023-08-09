@@ -1,5 +1,5 @@
 package TiffinSerSys;
 
-public class OrderCust {
+public class Order {
     
 }

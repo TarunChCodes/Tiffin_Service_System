@@ -182,7 +182,7 @@ JPanel headingPanel,cartPanel;
         addLabel.setText(addStr);
 
         //  this variable is used to send customer info to recipt class by binding into a single str
-        custInfoStr = "\t\r\n" + //
+        custInfoStr = "\r\n" + //
                 "  " + nameStr + "\r\n" + //
                 "  " + phnoStr + "\r\n" + //
                 "  " + addStr + "\t\r\n" + //
@@ -478,13 +478,14 @@ JPanel headingPanel,cartPanel;
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            
         // Data sending to Order Table for Customer cust_id
 
             // Before doing that check the previous order status of cust_id if its "Deleverd" then only accept the order else reject it by showing a msg "Soory prev order is not delevered yet!!"
             Boolean order_orNot = true;
             try {
                 rs = db.s.executeQuery("Select order_status from tss.order where cust_id = '"+cust_id+"'");
-                if(rs.next()) {
+                while(rs.next()) {
                     if(rs.getString("order_status").equals("Accepted")) {
                         order_orNot = false;
                     }
@@ -512,4 +513,3 @@ JPanel headingPanel,cartPanel;
 
     }
 }
-
