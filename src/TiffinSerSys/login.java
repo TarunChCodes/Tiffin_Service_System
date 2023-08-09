@@ -223,7 +223,6 @@ public class login extends JFrame implements ActionListener, KeyListener {
     public static void main(String[] args) {
         new login();
     }
-
     @Override
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == loginButton) {

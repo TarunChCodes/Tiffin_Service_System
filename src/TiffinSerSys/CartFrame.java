@@ -20,7 +20,9 @@ JPanel headingPanel,cartPanel;
     ResultSet rs;
 
     int totalOrderPrice;
-    String cust_id, nameStr, addStr, phnoStr;
+    int tiffinCost,packeditemCost; // Note : These var is used to send data to receiptFrame.. 
+    String cust_id, nameStr, addStr, phnoStr, custInfoStr = "";
+    String packeditemCartStr, tiffinCartStr;
     CartFrame(String id) {
         cust_id = id;
 
@@ -52,14 +54,14 @@ JPanel headingPanel,cartPanel;
 
         nameLabel = new JLabel("Name");
         nameLabel.setBounds(20,10,150,25);
-        nameLabel.setFont(new Font("Tahoma",Font.ITALIC,15));
+        nameLabel.setFont(new Font("Tahoma",Font.PLAIN,15));
 
         contactLabel = new JLabel("");
         contactLabel.setBounds(20,30,150,25);
         contactLabel.setFont(new Font("Tahoma",Font.PLAIN,14));
 
         addLabel = new JLabel("");
-        addLabel.setBounds(20,50,300,25);
+        addLabel.setBounds(20,50,325,25);
         addLabel.setFont(new Font("Tahoma",Font.PLAIN,14));
 
 //        -- Tiffin Cart Component --
@@ -179,6 +181,13 @@ JPanel headingPanel,cartPanel;
         contactLabel.setText("+91 " + phnoStr );
         addLabel.setText(addStr);
 
+        //  this variable is used to send customer info to recipt class by binding into a single str
+        custInfoStr = "\t\r\n" + //
+                "  " + nameStr + "\r\n" + //
+                "  " + phnoStr + "\r\n" + //
+                "  " + addStr + "\t\r\n" + //
+                "\t";
+
 //  Retrieving order from tables to TextArea
 
         //  for Tiffins
@@ -202,7 +211,7 @@ JPanel headingPanel,cartPanel;
             box4Str = rs.getString("item4");
                 box4PriceStr = rs.getString("item4_price");
 
-                tiffinTotalPrice  = Integer.parseInt(rs.getString("total_price"));
+                tiffinTotalPrice  = Integer.parseInt(rs.getString("total_price")); 
             }
         } catch (Exception e){
             e.printStackTrace();
@@ -217,7 +226,7 @@ JPanel headingPanel,cartPanel;
         String tiffincartS2 =  " " + box4Str +" - ₹" + box4PriceStr + "\n" ;
         String tiffincartEnd =   "---------------------------------" ;
 
-        String tiffinCartStr ="No Tiffin Added!!😢";
+        tiffinCartStr ="No Tiffin Added!!😢";
         if(boxqtyStr == 3) {
             tiffinCartStr = tiffincartS1 + tiffincartEnd;
         }
@@ -283,7 +292,7 @@ JPanel headingPanel,cartPanel;
         String packedcartS4 = " " + namkeenTypeStr + "/" + namkeenQty + " - ₹" + namkeenPrice + "\n" ;
         String packedcartEnd = "---------------------------------";
 
-        String packeditemCartStr = "No Item Added!!😢";
+        packeditemCartStr = "No Item Added!!😢";
         if(itemNum == 1) {
             packeditemCartStr = packedcartS1 + packedcartEnd;
         }
@@ -301,6 +310,9 @@ JPanel headingPanel,cartPanel;
 
         totalOrderPrice = tiffinTotalPrice + itemtotalPrice;
         totalPriceLabel.setText("₹ "+totalOrderPrice);
+
+        tiffinCost = tiffinTotalPrice;
+        packeditemCost = itemtotalPrice;
 
         tiffinTextArea.setText(tiffinCartStr);
         String dbcust_id = "";
@@ -369,6 +381,10 @@ JPanel headingPanel,cartPanel;
             }
         }
 
+        if(ae.getSource() == payButton) {
+            JOptionPane.showMessageDialog(null,"Payment successful");
+        }
+
         if(ae.getSource() == clearPackeditemCartButton) {
 
             try {
@@ -377,6 +393,8 @@ JPanel headingPanel,cartPanel;
                     db.s.executeUpdate("DELETE FROM `packedorder`");
                     packeditemTextArea.setText("");
                     JOptionPane.showMessageDialog(null,"CART CLEARED SUCCESSFULLY");
+                    cartFrame.setVisible(false);
+                    new CartFrame(cust_id);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -390,6 +408,8 @@ JPanel headingPanel,cartPanel;
                             db.s.executeUpdate("DELETE FROM `tiffinorder`");
                             tiffinTextArea.setText("");
                             JOptionPane.showMessageDialog(null,"CART CLEARED SUCCESSFULLY");
+                            cartFrame.setVisible(false);
+                            new CartFrame(cust_id);
                         }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -478,6 +498,8 @@ JPanel headingPanel,cartPanel;
                 try {
                     db.s.executeUpdate("INSERT INTO `order`(`order_id`, `cust_id`, `tiffin_id`, `packeditem_id`, `name`, `address`, `ph_no`, `price`, `pay_status`, `order_status`) VALUES ('"+order_id+"','"+cust_id+"','"+tiffinIdStr+"','"+packedIdStr+"','"+nameStr+"','"+addStr+"','"+phnoStr+"','"+priceStr+"','"+payStatusStr+"','"+orderstatusStr+"')");
                     JOptionPane.showMessageDialog(null, "Order Accepted");
+                    new Receipt(cust_id,custInfoStr,tiffinCartStr,packeditemCartStr,tiffinCost,packeditemCost,totalOrderPrice,payStatusStr);
+                    cartFrame.setVisible(false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }   
