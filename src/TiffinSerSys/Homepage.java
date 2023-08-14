@@ -72,7 +72,11 @@ public class Homepage extends JFrame implements ActionListener {
         order = new JButton("Orders");
         order.setFont(new Font("Arial", Font.BOLD, 20));
         order.setForeground(Color.white);
-        order.setBounds(20, 150, 125, 30);
+        if(usrtype.equals("Admin")) {
+            order.setBounds(20, 100, 125, 30);    
+        } else {
+            order.setBounds(20, 150, 125, 30);
+        }
         order.setContentAreaFilled(false);
         order.setBorderPainted(false);
         order.setHorizontalAlignment(JButton.LEFT);
@@ -90,7 +94,7 @@ public class Homepage extends JFrame implements ActionListener {
         custInfo = new JButton("Customer Information");
         custInfo.setFont(new Font("Arial", Font.BOLD, 20));
         custInfo.setForeground(Color.white);
-        custInfo.setBounds(20, 200, 260, 30);
+        custInfo.setBounds(20, 150, 260, 30);
         custInfo.setContentAreaFilled(false);
         custInfo.setBorderPainted(false);
         custInfo.setHorizontalAlignment(JButton.LEFT);
@@ -99,7 +103,7 @@ public class Homepage extends JFrame implements ActionListener {
         empInfo = new JButton("Employee Information");
         empInfo.setFont(new Font("Arial", Font.BOLD, 20));
         empInfo.setForeground(Color.white);
-        empInfo.setBounds(20, 250, 260, 30);
+        empInfo.setBounds(20, 200, 260, 30);
         empInfo.setContentAreaFilled(false);
         empInfo.setBorderPainted(false);
         empInfo.setHorizontalAlignment(JButton.LEFT);
@@ -116,7 +120,7 @@ public class Homepage extends JFrame implements ActionListener {
         menu_Jpanel.add(myProfile);
         menu_Jpanel.add(logout);
         if(usrtype.equals("Admin")) {
-            menu_Jpanel.add(tiffinCat);
+            // menu_Jpanel.add(tiffinCat);
              menu_Jpanel.add(order);
             menu_Jpanel.add(custInfo);
             menu_Jpanel.add(empInfo);
@@ -157,11 +161,11 @@ public class Homepage extends JFrame implements ActionListener {
             }
         } else if (ae.getSource() == order) {
             if(usrtype.equals("Customer")) {
-                JOptionPane.showMessageDialog(null, "Working On it!!");
+                new Order(id,usrtype);
             } else if(usrtype.equals("Admin")) {
-                JOptionPane.showMessageDialog(null, "Working On it!!");
+                new Order(id,usrtype);
             } else if(usrtype.equals("Employee")) {
-                JOptionPane.showMessageDialog(null, "Working On it!!");
+                new Order(id,usrtype);
             }
         } else if (ae.getSource() == cart) {
             new CartFrame(id);
